@@ -80,6 +80,6 @@ class UserController extends Controller
         // Delete user
 
         // Redirect user
-         return ['message' => 'User Deleted'];
+         //return ['message' => 'User Deleted'];
     }
 }

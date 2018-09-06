@@ -7,7 +7,7 @@
                 <h3 class="card-title">User Table</h3>
 
                 <div class="card-tools">
-                    <button class="btn btn-success" data-toggle="modal" data-target="#addNew">Add New <i class="fas fa-user-plus fw"></i>   </button>
+                    <button class="btn btn-success" @click="newModal" data-toggle="modal" data-target="#addNew">Add New <i class="fas fa-user-plus fw"></i>   </button>
 
                 </div>
               </div>
@@ -31,7 +31,9 @@
                     <td>{{user.type | upText}}</td>
                     <td>{{user.created_at | myDate}}</td>
                     <td>
-                        <a href="#"><i class="fa fa-edit blue"></i></a>
+                        <a href="#" @click="editModal(user)">
+                          <i class="fa fa-edit blue"></i>
+                          </a>
                         /
                         <a href="#" @click="deleteUser(user.id)">
                           <i class="fa fa-trash red"></i>
@@ -51,13 +53,13 @@
   <div class="modal-dialog modal-dialog-centered" role="document">
     <div class="modal-content">
       <div class="modal-header">
-        <h5 class="modal-title" id="exampleModalCenterTitle">Add New</h5>
+        <h5 class="modal-title" id="exampleModalCenterTitle">{{editMode?'Edit':'New'}}</h5>
         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
           <span aria-hidden="true">&times;</span>
         </button>
       </div>
 
-      <form @submit.prevent="createUser">
+      <form @submit.prevent="editMode ? updateUser() : createUser()">
       <div class="modal-body">
         <div class="form-group">
             <input v-model="form.name" type="text" name="name" placeholder="name"
@@ -83,7 +85,7 @@
                 class="form-control" :class="{ 'is-invalid': form.errors.has('type') }">
                 <option value="">Select Usre Role</option>
                 <option value="admin">Admin</option>
-                <option value="User">Standard User</option>
+                <option value="user">Standard User</option>
                 <option value="author">Author</option>
             </select>
             <has-error :form="form" field="type"></has-error>
@@ -98,7 +100,8 @@
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
-        <button type="submit" class="btn btn-primary">Create</button>
+        <button v-show="!editMode" type="submit" class="btn btn-primary">Create</button>
+        <button v-show="editMode" type="submit" class="btn btn-success">Update</button>
       </div>
 
       </form>
@@ -107,17 +110,16 @@
   </div>
 </div>
     </div>
-
-
-    
 </template>
 
 <script>
 export default {
   data() {
     return {
+      editMode: false,
       users : {},
       form: new Form({
+        id:'',
         name: '',
         email: '',
         password: '',
@@ -128,6 +130,37 @@ export default {
     }
   },
   methods: {
+    updateUser(){
+      this.$Progress.start()
+      this.form.put('api/user/'+this.form.id)
+      .then(() => {
+        //success
+          $('#addNew').modal('hide')
+            swal(
+            'Updated!',
+            'Your file has been deleted.',
+            'success'
+                )
+          Fire.$emit('RefreshNow')
+          this.$Progress.finish()
+      })
+      .catch(() =>{
+        swal("Failed!", "There was something wrong", "warning")
+        this.$Progress.fail()
+      })
+
+    },
+    editModal(user){
+      this.editMode = true
+      this.form.reset()
+      $('#addNew').modal('show')
+      this.form.fill(user)
+    },
+    newModal(){
+      this.editMode = false
+      this.form.reset()
+      $('#addNew').modal('show')
+    },
       deleteUser(id){
       swal({
           title: 'Are you sure?',
@@ -138,28 +171,32 @@ export default {
           cancelButtonColor: '#d33',
           confirmButtonText: 'Yes, delete it!'
           }).then((result) => {
-
             // send request to the server
-          if (result.value) {
-          swal(
-          'Deleted!',
-          'Your file has been deleted.',
-          'success'
-            )
-          }
-        })
-
+            if(result.value){
+                this.$Progress.start()
+                this.form.delete('api/user/'+id).then(()=>{
+                swal(
+                'Deleted!',
+                'Your file has been deleted.',
+                'success'
+                )
+                Fire.$emit('RefreshNow')
+                this.$Progress.finish()
+                }).catch(()=> {
+                  swal("Failed!", "There was something wrong", "warning")
+                  this.$Progress.fail()
+                })
+            }
+       })
     },
     loadUsers(){
       axios.get("/api/user").then(({data}) => (this.users = data.data))
     },
     createUser(){
           this.$Progress.start()
-          this.form.post('api/user')
-          .then(() => {
-              Fire.$emit('AfterCreate')
+          this.form.post('api/user').then(() => {
+              Fire.$emit('RefreshNow')
               $('#addNew').modal('hide')
-
             toast({
                type: 'success',
                title: 'User created successfully'
@@ -169,13 +206,12 @@ export default {
           })
           .catch(() => {
             this.$Progress.fail()
-
           })
       }
   },
   created() {
     this.loadUsers()
-    Fire.$on('AfterCreate',() => {
+    Fire.$on('RefreshNow',() => {
        this.loadUsers()
     })
     // setInterval(() => this.loadUsers(), 3000)

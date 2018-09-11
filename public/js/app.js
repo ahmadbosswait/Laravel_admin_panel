@@ -30690,7 +30690,7 @@ module.exports = Cancel;
 /***/ (function(module, exports, __webpack_require__) {
 
 __webpack_require__(141);
-module.exports = __webpack_require__(205);
+module.exports = __webpack_require__(202);
 
 
 /***/ }),
@@ -72731,12 +72731,28 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
     mounted: function mounted() {
         console.log('Component mounted.');
     },
+
+    methods: {
+        updateProfile: function updateProfile(e) {
+            var _this = this;
+
+            //console.log('uploading')
+            var file = e.target.files[0];
+            //console.log(file)
+            var reader = new FileReader();
+            reader.onloadend = function (file) {
+                //console.log('RESULT' , reader.result)
+                _this.form.photo = reader.result;
+            };
+            reader.readAsDataURL(file);
+        }
+    },
     created: function created() {
-        var _this = this;
+        var _this2 = this;
 
         axios.get("api/profile").then(function (_ref) {
             var data = _ref.data;
-            return _this.form.fill(data);
+            return _this2.form.fill(data);
         });
     }
 });
@@ -72849,11 +72865,28 @@ var render = function() {
                     _vm._v(" "),
                     _vm._m(3),
                     _vm._v(" "),
+                    _c("div", { staticClass: "form-group" }, [
+                      _c(
+                        "label",
+                        {
+                          staticClass: "col-sm-2 control-label",
+                          attrs: { for: "photo" }
+                        },
+                        [_vm._v("Profile Photo")]
+                      ),
+                      _vm._v(" "),
+                      _c("div", { staticClass: "col-sm-12" }, [
+                        _c("input", {
+                          staticClass: "form-input",
+                          attrs: { type: "file", name: "photo" },
+                          on: { change: _vm.updateProfile }
+                        })
+                      ])
+                    ]),
+                    _vm._v(" "),
                     _vm._m(4),
                     _vm._v(" "),
-                    _vm._m(5),
-                    _vm._v(" "),
-                    _vm._m(6)
+                    _vm._m(5)
                   ])
                 ]
               )
@@ -72993,25 +73026,6 @@ var staticRenderFns = [
         _c("textarea", {
           staticClass: "form-control",
           attrs: { id: "inputExperience", placeholder: "Experience" }
-        })
-      ])
-    ])
-  },
-  function() {
-    var _vm = this
-    var _h = _vm.$createElement
-    var _c = _vm._self._c || _h
-    return _c("div", { staticClass: "form-group" }, [
-      _c(
-        "label",
-        { staticClass: "col-sm-2 control-label", attrs: { for: "photo" } },
-        [_vm._v("Profile Photo")]
-      ),
-      _vm._v(" "),
-      _c("div", { staticClass: "col-sm-12" }, [
-        _c("input", {
-          staticClass: "form-input",
-          attrs: { type: "file", name: "photo" }
         })
       ])
     ])
@@ -75187,10 +75201,7 @@ if (false) {
 }
 
 /***/ }),
-/* 202 */,
-/* 203 */,
-/* 204 */,
-/* 205 */
+/* 202 */
 /***/ (function(module, exports) {
 
 // removed by extract-text-webpack-plugin

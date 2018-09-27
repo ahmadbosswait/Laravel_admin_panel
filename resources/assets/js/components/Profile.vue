@@ -21,10 +21,11 @@
                     <h5 class="widget-user-desc">Web Designer</h5>
                 </div>
                 <div class="widget-user-image">
-                    <img class="img-circle" src="" alt="User Avatar">
+                    <img class="img-circle" :src="getProfilePhoto()" alt="User Avatar">
                 </div>
                 <div class="card-footer">
                     <div class="row">
+                
                     <div class="col-sm-4 border-right">
                         <div class="description-block">
                         <h5 class="description-header">3,200</h5>
@@ -78,14 +79,18 @@
                                     <label for="inputName" class="col-sm-2 control-label">Name</label>
 
                                     <div class="col-sm-12">
-                                    <input type="email" v-model="form.name" class="form-control" id="inputName" placeholder="Name">
+                                    <input type="email" v-model="form.name" class="form-control" id="inputName" 
+                                    placeholder="Name"  :class="{ 'is-invalid': form.errors.has('name') }">
+                                    <has-error :form="form" field="name"></has-error>
                                     </div>
                                 </div>
                                 <div class="form-group">
                                     <label for="inputEmail" class="col-sm-2 control-label">Email</label>
-
                                     <div class="col-sm-12">
-                                    <input type="email" v-model="form.email" class="form-control" id="inputEmail" placeholder="Email">
+                                    <input type="email" v-model="form.email" class="form-control" id="inputEmail" 
+                                    placeholder="Email" :class="{ 'is-invalid': form.errors.has('email') }">
+                                    <has-error :form="form" field="email"></has-error>
+                                    
                                     </div>
                                 </div>
 
@@ -108,13 +113,15 @@
                                     <label for="passpord" class="col-sm-12 control-label">Passport (leave empty if not changing)</label>
 
                                     <div class="col-sm-12">
-                                    <input type="passpord" class="form-control" id="passpord" placeholder="Passport">
+                                    <input type="passpord" v-model="form.password" class="form-control" id="passpord" 
+                                    placeholder="Password" :class="{ 'is-invalid': form.errors.has('password') }">
+                                    <has-error :form="form" field="password"></has-error>
                                     </div>
                                 </div>
 
                                 <div class="form-group">
                                     <div class="col-sm-offset-2 col-sm-12">
-                                    <button type="submit" class="btn btn-success">Update</button>
+                                    <button @click.prevent="updateInfo" type="submit" class="btn btn-success">Update</button>
                                     </div>
                                 </div>
                                 </form>
@@ -131,12 +138,11 @@
     </div>
 </template>
 
-
-
 <script>
     export default {
         data(){
             return {
+                editMode: false,
                  form: new Form({
                     id:'',
                     name : '',
@@ -152,22 +158,53 @@
             console.log('Component mounted.')
         },
         methods:{
+            getProfilePhoto(){
+                return "img/profile/" + this.form.photo
+            },
+            updateInfo(){
+                this.$Progress.start()
+                this.form.put('api/profile')
+                Fire.$emit('RefreshNow')
+                this.$Progress.finish()
+                .then(() => {
+                    Fire.$emit('RefreshNow')
+                    this.$Progress.finish()
+                })
+                .catch(() => {
+                    this.$Progress.fail();
+                })
+            },
             updateProfile(e){
                 //console.log('uploading')
                 let file = e.target.files[0]
-                //console.log(file)
+                console.log(file)
                 let reader = new FileReader()
-                reader.onloadend = (file) => {
+                if (file['size'] < 2111775){
+                    reader.onloadend = (file) => {
                     //console.log('RESULT' , reader.result)
-                    this.form.photo = reader.result
+                    this.form.photo = reader.result 
                 }
                 reader.readAsDataURL(file)
-            }
+                }else{
+                    swal({
+                        type: 'error',
+                        title: 'Oops ...',
+                        text: 'You are uploading a large file',
+                    })
+                }
+                
+            },
+            loadProfile(){
+                axios.get("api/profile").then(({ data }) => (this.form.fill(data)))
+        }
+            
         },
         created() {
-            axios.get("api/profile")
-            .then(({ data }) =>
-        (this.form.fill(data)))
+            this.loadProfile()
+            Fire.$on('RefreshNow',() => {
+                this.loadProfile()
+             })
+        
         }
     }
 </script>

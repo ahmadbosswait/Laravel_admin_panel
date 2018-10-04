@@ -17,7 +17,7 @@ class UserController extends Controller
     //  */
     public function __construct()
     {
-        $this->middleware('auth:api');
+        //$this->middleware('auth:api');
     }
 
     /**
@@ -27,6 +27,7 @@ class UserController extends Controller
      */
     public function index()
     {
+        $this->authorize('isAdmin');
         return User::latest()->paginate(10);
     }
 
@@ -133,11 +134,10 @@ class UserController extends Controller
      */
     public function destroy($id)
     {
+        $this->authorize('isAdmin');
         $user = User::findOrFail($id);
-
-        // Delete user
+        // delete the user
         $user->delete();
-        // Redirect user
         return ['message' => 'User Deleted'];
     }
 }

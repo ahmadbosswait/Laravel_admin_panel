@@ -71700,9 +71700,7 @@ var render = function() {
           _c("passport-personal-access-tokens")
         ],
         1
-      ),
-      _vm._v(" "),
-      _c("b")
+      )
     ])
   ])
 }
@@ -72538,7 +72536,7 @@ exports = module.exports = __webpack_require__(4)(false);
 
 
 // module
-exports.push([module.i, "\n.widget-user-header{\n    background-position: center center;\n    background-size: cover;\n    height: 250px !important;\n}\n.widget-user .card-footer{\n    padding: 0;\n}\n", ""]);
+exports.push([module.i, "\n.widget-user-header {\n  background-position: center center;\n  background-size: cover;\n  height: 250px !important;\n}\n.widget-user .card-footer {\n  padding: 0;\n}\n", ""]);
 
 // exports
 
@@ -72720,83 +72718,81 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 //
 //
 //
-//
-//
 
 /* harmony default export */ __webpack_exports__["default"] = ({
-    data: function data() {
-        return {
-            editMode: false,
-            form: new Form({
-                id: '',
-                name: '',
-                email: '',
-                password: '',
-                type: '',
-                bio: '',
-                photo: ''
-            })
+  data: function data() {
+    return {
+      editMode: false,
+      form: new Form({
+        id: "",
+        name: "",
+        email: "",
+        password: "",
+        type: "",
+        bio: "",
+        photo: ""
+      })
+    };
+  },
+  mounted: function mounted() {
+    console.log("Component mounted.");
+  },
+
+  methods: {
+    getProfilePhoto: function getProfilePhoto() {
+      var photo = this.form.photo.length > 200 ? this.form.photo : "img/profile/" + this.form.photo;
+      return photo;
+    },
+    updateInfo: function updateInfo() {
+      var _this = this;
+
+      this.$Progress.start();
+      if (this.form.password == "") {
+        this.form.password = undefined;
+      }
+      this.form.put("api/profile").then(function () {
+        Fire.$emit("RefreshNow");
+        _this.$Progress.finish();
+      }).catch(function () {
+        _this.$Progress.fail();
+      });
+    },
+    updateProfile: function updateProfile(e) {
+      var _this2 = this;
+
+      //console.log('uploading')
+      var file = e.target.files[0];
+      console.log(file);
+      var reader = new FileReader();
+      if (file["size"] < 2111775) {
+        reader.onloadend = function (file) {
+          //console.log('RESULT' , reader.result)
+          _this2.form.photo = reader.result;
         };
-    },
-    mounted: function mounted() {
-        console.log('Component mounted.');
-    },
-
-    methods: {
-        getProfilePhoto: function getProfilePhoto() {
-            return "img/profile/" + this.form.photo;
-        },
-        updateInfo: function updateInfo() {
-            var _this = this;
-
-            this.$Progress.start();
-            this.form.put('api/profile');
-            Fire.$emit('RefreshNow');
-            this.$Progress.finish().then(function () {
-                Fire.$emit('RefreshNow');
-                _this.$Progress.finish();
-            }).catch(function () {
-                _this.$Progress.fail();
-            });
-        },
-        updateProfile: function updateProfile(e) {
-            var _this2 = this;
-
-            //console.log('uploading')
-            var file = e.target.files[0];
-            console.log(file);
-            var reader = new FileReader();
-            if (file['size'] < 2111775) {
-                reader.onloadend = function (file) {
-                    //console.log('RESULT' , reader.result)
-                    _this2.form.photo = reader.result;
-                };
-                reader.readAsDataURL(file);
-            } else {
-                swal({
-                    type: 'error',
-                    title: 'Oops ...',
-                    text: 'You are uploading a large file'
-                });
-            }
-        },
-        loadProfile: function loadProfile() {
-            var _this3 = this;
-
-            axios.get("api/profile").then(function (_ref) {
-                var data = _ref.data;
-                return _this3.form.fill(data);
-            });
-        }
-    },
-    created: function created() {
-        var _this4 = this;
-
-        this.loadProfile();
-        Fire.$on('RefreshNow', function () {
-            _this4.loadProfile();
+        reader.readAsDataURL(file);
+      } else {
+        swal({
+          type: "error",
+          title: "Oops ...",
+          text: "You are uploading a large file"
         });
+      }
+    },
+    getRequest: function getRequest() {
+      var _this3 = this;
+
+      axios.get("api/profile").then(function (_ref) {
+        var data = _ref.data;
+        return _this3.form.fill(data);
+      });
     }
+  },
+  created: function created() {
+    this.getRequest();
+    // Fire.$on('RefreshNow',() => {
+    //     this.loadProfile()
+    //  })
+  }
 });
 
 /***/ }),

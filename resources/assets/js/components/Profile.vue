@@ -1,15 +1,13 @@
 <style>
-.widget-user-header{
-    background-position: center center;
-    background-size: cover;
-    height: 250px !important;
+.widget-user-header {
+  background-position: center center;
+  background-size: cover;
+  height: 250px !important;
 }
-.widget-user .card-footer{
-    padding: 0;
+.widget-user .card-footer {
+  padding: 0;
 }
 </style>
-
-
 <template>
     <div class="container">
         <div class="row">
@@ -139,72 +137,75 @@
 </template>
 
 <script>
-    export default {
-        data(){
-            return {
-                editMode: false,
-                 form: new Form({
-                    id:'',
-                    name : '',
-                    email: '',
-                    password: '',
-                    type: '',
-                    bio: '',
-                    photo: ''
-                })
-            }
-        },
-        mounted() {
-            console.log('Component mounted.')
-        },
-        methods:{
-            getProfilePhoto(){
-                return "img/profile/" + this.form.photo
-            },
-            updateInfo(){
-                this.$Progress.start()
-                this.form.put('api/profile')
-                Fire.$emit('RefreshNow')
-                this.$Progress.finish()
-                .then(() => {
-                    Fire.$emit('RefreshNow')
-                    this.$Progress.finish()
-                })
-                .catch(() => {
-                    this.$Progress.fail();
-                })
-            },
-            updateProfile(e){
-                //console.log('uploading')
-                let file = e.target.files[0]
-                console.log(file)
-                let reader = new FileReader()
-                if (file['size'] < 2111775){
-                    reader.onloadend = (file) => {
-                    //console.log('RESULT' , reader.result)
-                    this.form.photo = reader.result 
-                }
-                reader.readAsDataURL(file)
-                }else{
-                    swal({
-                        type: 'error',
-                        title: 'Oops ...',
-                        text: 'You are uploading a large file',
-                    })
-                }
-                
-            },
-            loadProfile(){
-                axios.get("api/profile").then(({ data }) => (this.form.fill(data)))
-        }
-            
-        },
-        created() {
-            this.loadProfile()
-            Fire.$on('RefreshNow',() => {
-                this.loadProfile()
-             })
-        
-        }
+export default {
+  data() {
+    return {
+      editMode: false,
+      form: new Form({
+        id: "",
+        name: "",
+        email: "",
+        password: "",
+        type: "",
+        bio: "",
+        photo: ""
+      })
+    };
+  },
+  mounted() {
+    console.log("Component mounted.");
+  },
+  methods: {
+    getProfilePhoto() {
+      let photo =
+        this.form.photo.length > 200
+          ? this.form.photo
+          : "img/profile/" + this.form.photo;
+      return photo;
+    },
+    updateInfo() {
+      this.$Progress.start();
+      if (this.form.password == "") {
+        this.form.password = undefined;
+      }
+      this.form
+        .put("api/profile")
+        .then(() => {
+          Fire.$emit("RefreshNow");
+          this.$Progress.finish();
+        })
+        .catch(() => {
+          this.$Progress.fail();
+        });
+    },
+    updateProfile(e) {
+      //console.log('uploading')
+      let file = e.target.files[0];
+      console.log(file);
+      let reader = new FileReader();
+      if (file["size"] < 2111775) {
+        reader.onloadend = file => {
+          //console.log('RESULT' , reader.result)
+          this.form.photo = reader.result;
+        };
+        reader.readAsDataURL(file);
+      } else {
+        swal({
+          type: "error",
+          title: "Oops ...",
+          text: "You are uploading a large file"
+        });
+      }
+    },
+    getRequest() {
+      axios.get("api/profile").then(({ data }) => this.form.fill(data));
     }
+  },
+  created() {
+    this.getRequest();
+    // Fire.$on('RefreshNow',() => {
+    //     this.loadProfile()
+    //  })
+  }
+};
 </script>

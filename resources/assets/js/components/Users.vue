@@ -132,7 +132,7 @@ export default {
   methods: {
     updateUser(){
       this.$Progress.start()
-      this.form.put('api/user/'+this.form.id)
+      this.form.put('api/user/' + this.form.id)
       .then(() => {
         //success
           $('#addNew').modal('hide')
@@ -174,7 +174,7 @@ export default {
             // send request to the server
             if(result.value){
                 this.$Progress.start()
-                this.form.delete('api/user/'+id).then(()=>{
+                this.form.delete('api/user/' + id).then(()=>{
                 swal(
                 'Deleted!',
                 'Your file has been deleted.',

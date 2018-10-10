@@ -76,6 +76,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
                   </p>
                 </router-link>
             </li>
+            @can('isAdmin')
             <li class="nav-item has-treeview {{--menu-open--}}">
               <a href="#" class="nav-link">
               <i class="nav-icon fas fa-cog"></i>
@@ -93,16 +94,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
                 </li>
               </ul>
             </li>
-            <li class="nav-item">
-              <router-link to="/profile" class="nav-link">
-                  <i class="nav-icon fas fa-user"></i>
-                  <p>
-                    Profile
-                  </p>
-              </router-link>
-            </li>
-
-            @can('isAdmin')
+     
             <li class="nav-item">
               <router-link to="/developer" class="nav-link">
                   <i class="nav-icon fas fa-cogs"></i>
@@ -112,7 +104,14 @@ scratch. This page gets rid of all links and provides the needed markup only.
               </router-link>
             </li>
             @endcan
-            
+            <li class="nav-item">
+              <router-link to="/profile" class="nav-link">
+                  <i class="nav-icon fas fa-user"></i>
+                  <p>
+                    Profile
+                  </p>
+              </router-link>
+            </li>
             <li class="nav-item">
               <a class="nav-link" href="{{ route('logout') }}"
                     onclick="event.preventDefault();
@@ -159,6 +158,12 @@ scratch. This page gets rid of all links and provides the needed markup only.
     </footer>
   </div>
 
+  @auth
+    <script>
+      window.user = @json(auth()->user());
+    </script>
+      
+  @endauth
   <script src="/js/app.js"></script>
 </body>
 

@@ -12,7 +12,7 @@ import { Form, HasError, AlertError } from 'vform';
 
 import Gate from './Gate';
 Vue.prototype.$gate = new Gate(window.user)
-6
+
 // ES6 Modules or TypeScript
 import swal from 'sweetalert2'
 window.swal = swal
@@ -79,6 +79,11 @@ Vue.component(
 Vue.component(
   'passport-personal-access-tokens',
   require('./components/passport/PersonalAccessTokens.vue')
+);
+
+Vue.component(
+  'not-found',
+  require('./components/NotFound.vue')
 );
 //Vue.component('example-component', require('./components/ExampleComponent.vue'));
 

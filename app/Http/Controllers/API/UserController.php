@@ -17,7 +17,7 @@ class UserController extends Controller
     //  */
     public function __construct()
     {
-        //$this->middleware('auth:api');
+        $this->middleware('auth:api');
         //this is develop branch
     }
 
@@ -28,7 +28,7 @@ class UserController extends Controller
      */
     public function index()
     {
-        // $this->authorize('isAdmin');
+        $this->authorize('isAdmin');
         return User::latest()->paginate(10);
     }
 

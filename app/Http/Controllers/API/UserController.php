@@ -28,8 +28,10 @@ class UserController extends Controller
      */
     public function index()
     {
-        $this->authorize('isAdmin');
-        return User::latest()->paginate(10);
+        // $this->authorize('isAdmin');
+        if (\Gate::allows('isAdmin') || \Gate::allows('isAuthor')) {
+            return User::latest()->paginate(10);
+        }
     }
 
     /**
@@ -70,7 +72,6 @@ class UserController extends Controller
             'email' => 'required|string|email|max:191|unique:users,email,'.$user->id,
             'password' => 'sometimes|min:6'
         ]);
-
         $currentPhoto = $user->photo;
         if( $request->photo != $currentPhoto){
             $name = time() . '.' . explode('/', explode(':', substr($request->photo, 0, strpos

@@ -18,7 +18,11 @@ class UserController extends Controller
     public function __construct()
     {
         $this->middleware('auth:api');
-        //this is develop branch 2
+<<<<<<< HEAD
+        //this is develop branch
+=======
+        //this is develop branch
+>>>>>>> 50045fff826dadf7a6f73d1abd9ed4763a315725
     }
 
     /**

@@ -1,6 +1,6 @@
 <template>
     <div class="container">
-        <div class="row mt-5">
+        <div class="row mt-5" v-if="$gate.isAdmin()">
           <div class="col-md-12">
             <div class="card">
               <div class="card-header">
@@ -47,7 +47,9 @@
             <!-- /.card -->
           </div>
         </div>
-
+        <div v-if="!$gate.isAdmin()">
+          <not-found></not-found>
+        </div>
         <!-- Modal -->
 <div class="modal fade" id="addNew" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
   <div class="modal-dialog modal-dialog-centered" role="document">
@@ -132,7 +134,7 @@ export default {
   methods: {
     updateUser(){
       this.$Progress.start()
-      this.form.put('api/user/'+this.form.id)
+      this.form.put('api/user/' + this.form.id)
       .then(() => {
         //success
           $('#addNew').modal('hide')
@@ -174,7 +176,7 @@ export default {
             // send request to the server
             if(result.value){
                 this.$Progress.start()
-                this.form.delete('api/user/'+id).then(()=>{
+                this.form.delete('api/user/' + id).then(()=>{
                 swal(
                 'Deleted!',
                 'Your file has been deleted.',
@@ -190,7 +192,10 @@ export default {
        })
     },
     loadUsers(){
-      axios.get("/api/user").then(({data}) => (this.users = data.data))
+      if(this.$gate.isAdmin()){
+        axios.get("/api/user").then(({data}) => (this.users = data.data))
+      }
+      
     },
     createUser(){
           this.$Progress.start()

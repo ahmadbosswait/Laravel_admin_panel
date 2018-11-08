@@ -142,6 +142,7 @@ class UserController extends Controller
         $user->delete();
         return ['message' => 'User Deleted'];
     }
+    // search box
     public function search()
     {
         if($search = \Request::get('q'))

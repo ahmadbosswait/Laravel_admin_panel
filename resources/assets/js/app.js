@@ -43,27 +43,27 @@ Vue.use(VueProgressBar, {
 })
 
 let routes = [
-    { path: '/dashboard', component: require('./components/Dashboard.vue') },
-    { path: '/developer', component: require('./components/Developer.vue') },
-    { path: '/users', component: require('./components/Users.vue') },
-    { path: '/profile', component: require('./components/Profile.vue') },
-    { path: '*', component: require('./components/NotFound.vue') }
-  ]
+  { path: '/dashboard', component: require('./components/Dashboard.vue') },
+  { path: '/developer', component: require('./components/Developer.vue') },
+  { path: '/users', component: require('./components/Users.vue') },
+  { path: '/profile', component: require('./components/Profile.vue') },
+  { path: '*', component: require('./components/NotFound.vue') }
+]
 
 const router = new VueRouter({
-    mode:'history',
-    routes // short for `routes: routes`
-  })
+  mode: 'history',
+  routes // short for `routes: routes`
+})
 
-  Vue.filter('upText', function(text){
-    return text.charAt(0).toUpperCase() + text.slice(1)
-  })
+Vue.filter('upText', function (text) {
+  return text.charAt(0).toUpperCase() + text.slice(1)
+})
 
-  Vue.filter('myDate', function(created){
-    return moment(created).format('MMMM Do YYYY')
-  })
+Vue.filter('myDate', function (created) {
+  return moment(created).format('MMMM Do YYYY')
+})
 
-window.Fire =  new Vue();
+window.Fire = new Vue();
 /**
  * Next, we will create a fresh Vue application instance and attach it to
  * the page. Then, you may begin adding components to this application
@@ -91,6 +91,14 @@ Vue.component(
 //Vue.component('example-component', require('./components/ExampleComponent.vue'));
 
 const app = new Vue({
-    el: "#app",
-    router : router
+  el: "#app",
+  router: router,
+  data: {
+    search: ''
+  },
+  methods: {
+    searchit() {
+      Fire.$emit('searching')
+    }
+  }
 });

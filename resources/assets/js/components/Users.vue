@@ -223,6 +223,16 @@ export default {
       }
   },
   created() {
+    Fire.$on('searching', () => {
+      let query = this.$parent.search
+      axios.get('api/finduser?q=' + query)
+      .then((data) => {
+        this.users = data.data
+      })
+      .catch((e) => {
+
+      })
+    })
     this.loadUsers()
     Fire.$on('RefreshNow',() => {
        this.loadUsers()

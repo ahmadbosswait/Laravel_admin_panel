@@ -17,6 +17,7 @@ class UserController extends Controller
     //  */
     public function __construct()
     {
+        // default
         $this->middleware('auth:api');
         
     }

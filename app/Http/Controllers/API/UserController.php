@@ -17,6 +17,7 @@ class UserController extends Controller
     //  */
     public function __construct()
     {
+        // default
         $this->middleware('auth:api');
         
     }
@@ -42,7 +43,7 @@ class UserController extends Controller
      */
     public function store(Request $request)
     {
-
+        // $this->authorize('isAdmin');
         $this->validate($request,[
             'name' => 'required|string|max:191',
             'email' => 'required|string|email|max:191|unique:users',

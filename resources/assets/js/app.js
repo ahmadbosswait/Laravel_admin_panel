@@ -92,13 +92,13 @@ Vue.component(
 
 const app = new Vue({
   el: "#app",
-  router: router,
+  router,
   data: {
     search: ''
   },
   methods: {
-    searchit() {
-      Fire.$emit('searching')
-    }
+    searchit: _.debounce(() => {
+      Fire.$emit('searching');
+    }, 1000)
   }
 });

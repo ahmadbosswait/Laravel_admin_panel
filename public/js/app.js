@@ -30837,9 +30837,9 @@ var app = new Vue({
     search: ''
   },
   methods: {
-    searchit: function searchit() {
+    searchit: _.debounce(function () {
       Fire.$emit('searching');
-    }
+    }, 1000)
   }
 });
 
@@ -73961,7 +73961,7 @@ exports = module.exports = __webpack_require__(4)(false);
 
 
 // module
-exports.push([module.i, "\n.widget-user-header {\n  background-position: center center;\n  background-size: cover;\n  height: 250px !important;\n}\n.widget-user .card-footer {\n  padding: 0;\n}\n", ""]);
+exports.push([module.i, "\n.widget-user-header {\r\n  background-position: center center;\r\n  background-size: cover;\r\n  height: 250px !important;\n}\n.widget-user .card-footer {\r\n  padding: 0;\n}\r\n", ""]);
 
 // exports
 
